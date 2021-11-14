@@ -1,26 +1,45 @@
 #[macro_use]
 extern crate clap;
-use std::process::exit;
-
 use clap::App;
-
-fn main() {
+use kvs::{KvStore, KvsError, Result};
+use std::env::current_dir;
+use std::process::exit;
+fn main() -> Result<()> {
     let yaml = load_yaml!("cli.yml");
-    let m = App::from_yaml(yaml).get_matches();
-    
-    match m.subcommand(){
-        ("set",Some(_matchs))=>{
-            println!("{:#?}",_matchs);
-            exit(1);
+    let matches = App::from_yaml(yaml).get_matches();
+
+    match matches.subcommand() {
+        ("set", Some(matches)) => {
+            let key = matches.value_of("key").unwrap();
+            let value = matches.value_of("value").unwrap();
+
+            let mut store = KvStore::open(current_dir()?)?;
+            store.set(key.to_string(), value.to_string())?;
         }
-        ("get",Some(_matchs))=>{
-            eprintln!("unimplemented");
-            exit(1);
+        ("get", Some(matches)) => {
+            let key = matches.value_of("key").unwrap();
+
+            let mut store = KvStore::open(current_dir()?)?;
+            if let Some(value) = store.get(key.to_string())? {
+                println!("{}", value);
+            } else {
+                println!("key not found");
+            }
         }
-        ("rm",Some(_matchs))=>{
-            eprintln!("unimplemented");
-            exit(1);
+        ("rm", Some(matches)) => {
+            let key = matches.value_of("key").unwrap();
+
+            let mut store = KvStore::open(current_dir()?)?;
+            match store.remove(key.to_string()) {
+                Ok(()) => {}
+                Err(KvsError::KeyNotFound) => {
+                    println!("key not found");
+                    exit(1);
+                }
+                Err(e) => return Err(e),
+            }
         }
-        _=> unreachable!()
+        _ => unreachable!(),
     }
+    Ok(())
 }

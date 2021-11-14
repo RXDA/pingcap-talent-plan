@@ -2,6 +2,10 @@ name: kv
 version: "1.0"
 author: rxda
 about: mini kv
+args:
+    - version:
+        short: V
+        help: version
 subcommands:
     - set:
         about: Set the value of a string key to a string
