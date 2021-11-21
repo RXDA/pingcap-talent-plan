@@ -18,7 +18,7 @@ struct Opt {
         long,
         help = "Sets the listening address",
         value_name = "IP:PORT",
-        raw(default_value = "DEFAULT_LISTENING_ADDRESS"),
+        default_value = DEFAULT_LISTENING_ADDRESS,
         parse(try_from_str)
     )]
     addr: SocketAddr,
@@ -26,7 +26,7 @@ struct Opt {
         long,
         help = "Sets the storage engine",
         value_name = "ENGINE-NAME",
-        raw(possible_values = "&Engine::variants()")
+        possible_values = &Engine::variants()
     )]
     engine: Option<Engine>,
 }

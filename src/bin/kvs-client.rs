@@ -10,10 +10,8 @@ const ADDRESS_FORMAT: &str = "IP:PORT";
 #[derive(StructOpt, Debug)]
 #[structopt(
     name = "kvs-client",
-    raw(global_settings = "&[\
-                           AppSettings::DisableHelpSubcommand,\
-                           AppSettings::VersionlessSubcommands]")
-)]
+    global_settings = &[AppSettings::DisableHelpSubcommand,AppSettings::VersionlessSubcommands])
+]
 struct Opt {
     #[structopt(subcommand)]
     command: Command,
@@ -28,8 +26,8 @@ enum Command {
         #[structopt(
             long,
             help = "Sets the server address",
-            raw(value_name = "ADDRESS_FORMAT"),
-            raw(default_value = "DEFAULT_LISTENING_ADDRESS"),
+            value_name = ADDRESS_FORMAT,
+            default_value = DEFAULT_LISTENING_ADDRESS,
             parse(try_from_str)
         )]
         addr: SocketAddr,
@@ -43,8 +41,8 @@ enum Command {
         #[structopt(
             long,
             help = "Sets the server address",
-            raw(value_name = "ADDRESS_FORMAT"),
-            raw(default_value = "DEFAULT_LISTENING_ADDRESS"),
+            value_name = ADDRESS_FORMAT,
+            default_value = DEFAULT_LISTENING_ADDRESS,
             parse(try_from_str)
         )]
         addr: SocketAddr,
@@ -56,8 +54,8 @@ enum Command {
         #[structopt(
             long,
             help = "Sets the server address",
-            raw(value_name = "ADDRESS_FORMAT"),
-            raw(default_value = "DEFAULT_LISTENING_ADDRESS"),
+            value_name = "ADDRESS_FORMAT",
+            default_value = "DEFAULT_LISTENING_ADDRESS",
             parse(try_from_str)
         )]
         addr: SocketAddr,
