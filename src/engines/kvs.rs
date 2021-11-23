@@ -4,9 +4,9 @@ use std::io::{self, BufReader, BufWriter, Read, Seek, SeekFrom, Write};
 use std::ops::Range;
 use std::path::{Path, PathBuf};
 
+use crate::{KvsEngine, KvsError, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Deserializer;
-use crate::{KvsEngine, KvsError, Result};
 use std::ffi::OsStr;
 
 const COMPACTION_THRESHOLD: u64 = 1024 * 1024;
@@ -199,6 +199,10 @@ impl KvsEngine for KvStore {
         } else {
             Err(KvsError::KeyNotFound)
         }
+    }
+
+    fn ping(&self) -> Result<String> {
+        Ok("pong".into())
     }
 }
 

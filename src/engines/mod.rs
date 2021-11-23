@@ -20,11 +20,12 @@ pub trait KvsEngine {
     ///
     /// It returns `KvsError::KeyNotFound` if the given key is not found.
     fn remove(&mut self, key: String) -> Result<()>;
+
+    fn ping(&self) -> Result<String>;
 }
 
 mod kvs;
 mod sled;
-// mod sled;
 
 pub use self::kvs::KvStore;
 pub use self::sled::SledKvsEngine;

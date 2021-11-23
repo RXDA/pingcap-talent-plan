@@ -54,8 +54,19 @@ enum Command {
         #[structopt(
             long,
             help = "Sets the server address",
-            value_name = "ADDRESS_FORMAT",
-            default_value = "DEFAULT_LISTENING_ADDRESS",
+            value_name = ADDRESS_FORMAT,
+            default_value = DEFAULT_LISTENING_ADDRESS,
+            parse(try_from_str)
+        )]
+        addr: SocketAddr,
+    },
+    #[structopt(name = "ping", about = "Ping server")]
+    Ping {
+        #[structopt(
+            long,
+            help = "Sets the server address",
+            value_name = ADDRESS_FORMAT,
+            default_value = DEFAULT_LISTENING_ADDRESS,
             parse(try_from_str)
         )]
         addr: SocketAddr,
@@ -87,6 +98,14 @@ fn run(opt: Opt) -> Result<()> {
         Command::Remove { key, addr } => {
             let mut client = KvsClient::connect(addr)?;
             client.remove(key)?;
+        }
+        Command::Ping { addr } => {
+            let mut client = KvsClient::connect(addr)?;
+            if client.ping()? == "pong" {
+                println!("{}", "pong");
+            } else {
+                println!("Connect fail");
+            }
         }
     }
     Ok(())

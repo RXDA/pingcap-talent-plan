@@ -36,4 +36,8 @@ impl KvsEngine for SledKvsEngine {
         tree.flush()?;
         Ok(())
     }
+
+    fn ping(&self) -> Result<String> {
+        Ok("pong".into())
+    }
 }

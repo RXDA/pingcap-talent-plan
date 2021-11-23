@@ -1,9 +1,13 @@
-use crate::{KvsError, Result, common::{GetResponse, RemoveResponse, Request, SetResponse}};
+use crate::{
+    common::{GetResponse, PingResopnse, RemoveResponse, Request, SetResponse},
+    KvsError, Result,
+};
 use serde::Deserialize;
 use serde_json::{de::IoRead, Deserializer};
-use std::{io::{BufReader, BufWriter, Write}, net::{TcpStream, ToSocketAddrs}};
-
-
+use std::{
+    io::{BufReader, BufWriter, Write},
+    net::{TcpStream, ToSocketAddrs},
+};
 
 pub struct KvsClient {
     reader: Deserializer<IoRead<BufReader<TcpStream>>>,
@@ -51,6 +55,16 @@ impl KvsClient {
         match resp {
             RemoveResponse::Ok(_) => Ok(()),
             RemoveResponse::Err(msg) => Err(KvsError::StringError(msg)),
+        }
+    }
+
+    pub fn ping(&mut self) -> Result<String> {
+        serde_json::to_writer(&mut self.writer, &Request::Ping)?;
+        self.writer.flush()?;
+        let resp = PingResopnse::deserialize(&mut self.reader)?;
+        match resp {
+            PingResopnse::Ok(resp) => Ok(resp),
+            PingResopnse::Err(msg) => Err(KvsError::StringError(msg)),
         }
     }
 }

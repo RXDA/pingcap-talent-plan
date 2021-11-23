@@ -1,4 +1,4 @@
-use crate::common::{GetResponse, RemoveResponse, Request, SetResponse};
+use crate::common::{GetResponse, PingResopnse, RemoveResponse, Request, SetResponse};
 use crate::{KvsEngine, Result};
 use log::{debug, error};
 use serde_json::Deserializer;
@@ -58,6 +58,10 @@ impl<E: KvsEngine> KvsServer<E> {
                 Request::Remove { key } => send_resp!(match self.engine.remove(key) {
                     Ok(_) => RemoveResponse::Ok(()),
                     Err(e) => RemoveResponse::Err(format!("{}", e)),
+                }),
+                Request::Ping => send_resp!(match self.engine.ping() {
+                    Ok(resp) => PingResopnse::Ok(resp),
+                    Err(e) => PingResopnse::Err(format!("{}", e)),
                 }),
             };
         }
